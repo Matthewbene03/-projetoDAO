@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import entidades.Funcionario;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,6 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
 
     @Override
     public Funcionario findById(Integer id) {
-        Funcionario funcionario = new Funcionario();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -43,22 +43,39 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
                     + "seller.DepartmentId = department.Id WHERE seller.Id = ?");
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            while(rs.next()) {
-                Integer IdDep = rs.getInt("DepartmentId");
-                String nomeDep = rs.getString("DepName");
-                Departamento dep = new Departamento(IdDep, nomeDep);
-                
-                Integer idFun = rs.getInt("Id");
-                String nameFun = rs.getString("Name");
-                String emailFun = rs.getString("Email");
-                Date dataNascimento = rs.getDate("BirthDate");
-                Double salarioFun = rs.getDouble("BaseSalary");
-                return new Funcionario(idFun, nameFun, salarioFun, dataNascimento, emailFun, dep);
+            while (rs.next()) {
+                Departamento dep = inicializarDepartamento(rs);
+                return inicializarFuncionario(rs, dep);
             }
             return null;
         } catch (SQLException e) {
             throw new DB.DbException(e.getMessage());
-        } finally{
+        } finally {
+            DB.DB.closeResultSet(rs);
+            DB.DB.closeStatement(ps);
+        }
+    }
+
+    @Override
+    public List<Funcionario> findByDepartamento(Departamento departamento) {
+        List<Funcionario> listFuncionarios = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
+                    + "FROM seller INNER JOIN department ON seller.DepartmentId = department.Id "
+                    + "WHERE DepartmentId = ? ORDER BY Name");
+
+            ps.setInt(1, departamento.getIdDepartamento());
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Funcionario f = inicializarFuncionario(rs, departamento);
+                listFuncionarios.add(f);
+            }
+            return listFuncionarios;
+        } catch (SQLException e) {
+            throw new DB.DbException(e.getMessage());
+        } finally {
             DB.DB.closeResultSet(rs);
             DB.DB.closeStatement(ps);
         }
@@ -69,4 +86,18 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    private Departamento inicializarDepartamento(ResultSet rs) throws SQLException{
+        Integer IdDep = rs.getInt("DepartmentId");
+        String nomeDep = rs.getString("DepName");
+        return new Departamento(IdDep, nomeDep);
+    }
+
+    private Funcionario inicializarFuncionario(ResultSet rs, Departamento dep) throws SQLException {
+        Integer idFun = rs.getInt("Id");
+        String nameFun = rs.getString("Name");
+        String emailFun = rs.getString("Email");
+        Date dataNascimento = rs.getDate("BirthDate");
+        Double salarioFun = rs.getDouble("BaseSalary");
+        return new Funcionario(idFun, nameFun, salarioFun, dataNascimento, emailFun, dep);
+    }
 }
