@@ -8,7 +8,9 @@ import entidades.Funcionario;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FuncionarioDAOJDBC implements FuncionarioDAO {
 
@@ -83,10 +85,36 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
 
     @Override
     public List<Funcionario> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Funcionario> listFuncionarios = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
+                    + "FROM seller INNER JOIN department ON seller.DepartmentId = department.Id "
+                    + "ORDER BY Name");
+
+            rs = ps.executeQuery();
+            Map<Integer, Departamento>mapDepartamentos = new HashMap<>();
+            while (rs.next()) {
+                Departamento dep = mapDepartamentos.get(rs.getInt("DepartmentId"));
+                
+                if(dep == null){
+                    dep = inicializarDepartamento(rs);
+                    mapDepartamentos.put(dep.getIdDepartamento(), dep);
+                }
+                Funcionario f = inicializarFuncionario(rs, dep);
+                listFuncionarios.add(f);
+            }
+            return listFuncionarios;
+        } catch (SQLException e) {
+            throw new DB.DbException(e.getMessage());
+        } finally {
+            DB.DB.closeResultSet(rs);
+            DB.DB.closeStatement(ps);
+        }
     }
 
-    private Departamento inicializarDepartamento(ResultSet rs) throws SQLException{
+    private Departamento inicializarDepartamento(ResultSet rs) throws SQLException {
         Integer IdDep = rs.getInt("DepartmentId");
         String nomeDep = rs.getString("DepName");
         return new Departamento(IdDep, nomeDep);

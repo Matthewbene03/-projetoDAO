@@ -11,7 +11,7 @@ public class App {
 
     public static void main(String[] args) {
         FuncionarioDAO fDAO = DAOFactory.createFuncionarioDAO();
-        List<Funcionario> listF = fDAO.findByDepartamento(new Departamento(2, "teste"));
+        List<Funcionario> listF = fDAO.findAll();
         for (Funcionario funcionario : listF) {
             System.out.println(funcionario);
         }
