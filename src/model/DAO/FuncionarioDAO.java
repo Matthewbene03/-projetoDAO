@@ -1,5 +1,6 @@
-package entidades;
+package model.DAO;
 
+import entidades.Funcionario;
 import java.util.List;
 
 public interface FuncionarioDAO {

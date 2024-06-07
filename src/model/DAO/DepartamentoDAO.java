@@ -1,5 +1,6 @@
-package entidades;
+package model.DAO;
 
+import entidades.Departamento;
 import java.util.List;
 
 public interface DepartamentoDAO {
