@@ -1,15 +1,20 @@
 package app;
 
-import entidades.Departamento;
+import java.sql.Connection;
 import entidades.Funcionario;
-import java.time.LocalDate;
+import model.DAO.DAOFactory;
+import model.DAO.FuncionarioDAO;
 
 public class App {
 
     public static void main(String[] args) {
-        Departamento dep = new Departamento(1, "Vendas");
-        Funcionario fun = new Funcionario(12, "Matheus", 1000.0, LocalDate.MIN, "Email", dep);
+        FuncionarioDAO fDAO = DAOFactory.createFuncionarioDAO();
+        Funcionario f = fDAO.findById(3);
         
-        System.out.println(fun);
+        if(f == null){
+            System.out.println("Não existe funcionario com o ID " + 7);
+        } else
+            System.out.println(f);
+        DB.DB.closeConnection();
     }    
 }

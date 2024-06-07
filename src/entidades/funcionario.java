@@ -1,21 +1,21 @@
 package entidades;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 public class Funcionario implements Serializable{
     private Integer idFuncionario;
     private String nomeFuncionario;
     private Double salarioBase;
-    private LocalDate dataNascimento;
+    private Date dataNascimento;
     private String email;
     
     private Departamento departamento;
 
     public Funcionario() {}
 
-    public Funcionario(Integer idFuncionario, String nomeFuncionario, Double salarioBase, LocalDate dataNascimento, String email, Departamento departamento) {
+    public Funcionario(Integer idFuncionario, String nomeFuncionario, Double salarioBase, Date dataNascimento, String email, Departamento departamento) {
         this.idFuncionario = idFuncionario;
         this.nomeFuncionario = nomeFuncionario;
         this.salarioBase = salarioBase;
@@ -56,11 +56,11 @@ public class Funcionario implements Serializable{
         this.salarioBase = salarioBase;
     }
 
-    public LocalDate getDataNascimento() {
+    public Date getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
+    public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
