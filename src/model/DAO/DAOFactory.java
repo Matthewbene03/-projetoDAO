@@ -8,6 +8,6 @@ public class DAOFactory {
     }
 
     public static DepartamentoDAO createDepartamentoDAO() {
-        return new DepartamentoDAOJDBC();
+        return new DepartamentoDAOJDBC(DB.getConnection());
     }
 }
