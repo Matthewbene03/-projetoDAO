@@ -1,5 +1,6 @@
 package model.DAO;
 
+import java.sql.Statement;
 import entidades.Departamento;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,18 +22,84 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
     }
 
     @Override
-    public void insert(Object funcionario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void insert(Funcionario funcionario) {
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("INSERT INTO seller (Name, Email, "
+                    + "BirthDate, BaseSalary, DepartmentId) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, funcionario.getNomeFuncionario());
+            ps.setString(2, funcionario.getEmail());
+            ps.setDate(3, new java.sql.Date(funcionario.getDataNascimento().getTime()));
+            ps.setDouble(4, funcionario.getSalarioBase());
+            ps.setInt(5, funcionario.getDepartamento().getIdDepartamento());
+
+            int linhas = ps.executeUpdate();
+
+            if (linhas > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    funcionario.setIdFuncionario(id);
+                }
+                DB.DB.closeResultSet(rs);
+            } else {
+                throw new DB.DbException("ERROR! Não foi possivel inserir o funcionario.");
+            }
+        } catch (SQLException e) {
+            throw new DB.DbException(e.getMessage());
+        } finally {
+            DB.DB.closeStatement(ps);
+        }
     }
 
     @Override
-    public void update(Object funcionario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void update(Funcionario funcionario) {
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("UPDATE seller\n SET Name = ?, Email = ?, "
+                    + "BirthDate = ?, BaseSalary = ?, DepartmentId = ?\n WHERE Id = ?", Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, funcionario.getNomeFuncionario());
+            ps.setString(2, funcionario.getEmail());
+            ps.setDate(3, new java.sql.Date(funcionario.getDataNascimento().getTime()));
+            ps.setDouble(4, funcionario.getSalarioBase());
+            ps.setInt(5, funcionario.getDepartamento().getIdDepartamento());
+            ps.setInt(6, funcionario.getIdFuncionario());
+
+            int linhas = ps.executeUpdate();
+
+            if (linhas > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    funcionario.setIdFuncionario(id);
+                }
+                DB.DB.closeResultSet(rs);
+            } else {
+                throw new DB.DbException("ERROR! Não foi possivel inserir o funcionario.");
+            }
+        } catch (SQLException e) {
+            throw new DB.DbException(e.getMessage());
+        } finally {
+            DB.DB.closeStatement(ps);
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("DELETE FROM seller WHERE Id = ?");
+
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DB.DbException(e.getMessage());
+        } finally {
+            DB.DB.closeStatement(ps);
+        }
     }
 
     @Override
@@ -94,11 +161,11 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
                     + "ORDER BY Name");
 
             rs = ps.executeQuery();
-            Map<Integer, Departamento>mapDepartamentos = new HashMap<>();
+            Map<Integer, Departamento> mapDepartamentos = new HashMap<>();
             while (rs.next()) {
                 Departamento dep = mapDepartamentos.get(rs.getInt("DepartmentId"));
-                
-                if(dep == null){
+
+                if (dep == null) {
                     dep = inicializarDepartamento(rs);
                     mapDepartamentos.put(dep.getIdDepartamento(), dep);
                 }
