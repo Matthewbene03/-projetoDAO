@@ -1,6 +1,7 @@
 package app;
 
 import entidades.Departamento;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
 import model.DAO.DAOFactory;
@@ -8,7 +9,7 @@ import model.DAO.DepartamentoDAO;
 
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         Scanner sc = new Scanner(System.in);
         Menu.menuPrincipal();
         Integer respSetor = sc.nextInt();

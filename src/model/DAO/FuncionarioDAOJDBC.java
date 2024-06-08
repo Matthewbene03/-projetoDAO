@@ -41,6 +41,7 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
                 if (rs.next()) {
                     int id = rs.getInt(1);
                     funcionario.setIdFuncionario(id);
+                    Funcionario.getListaFuncionarios().add(funcionario);
                 }
                 DB.DB.closeResultSet(rs);
             } else {
@@ -74,6 +75,7 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
                 if (rs.next()) {
                     int id = rs.getInt(1);
                     funcionario.setIdFuncionario(id);
+                    Funcionario.getListaFuncionarios().add(funcionario);
                 }
                 DB.DB.closeResultSet(rs);
             } else {
@@ -95,6 +97,7 @@ public class FuncionarioDAOJDBC implements FuncionarioDAO {
             ps.setInt(1, id);
 
             ps.executeUpdate();
+            //Funcionario.getListaFuncionarios().remove(id);
         } catch (SQLException e) {
             throw new DB.DbException(e.getMessage());
         } finally {

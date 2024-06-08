@@ -1,17 +1,21 @@
 package entidades;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
-public class Funcionario implements Serializable{
+public class Funcionario implements Serializable {
+
     private Integer idFuncionario;
     private String nomeFuncionario;
     private Double salarioBase;
     private Date dataNascimento;
     private String email;
-    
+
     private Departamento departamento;
+    private static List<Funcionario> listaFuncionarios;
 
     public Funcionario() {}
 
@@ -22,6 +26,7 @@ public class Funcionario implements Serializable{
         this.dataNascimento = dataNascimento;
         this.email = email;
         this.departamento = departamento;
+        this.listaFuncionarios = new ArrayList<>();
     }
 
     public Departamento getDepartamento() {
@@ -72,6 +77,10 @@ public class Funcionario implements Serializable{
         this.email = email;
     }
 
+    public static List<Funcionario> getListaFuncionarios() {
+        return listaFuncionarios;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -98,5 +107,5 @@ public class Funcionario implements Serializable{
     public String toString() {
         return "Funcionario{" + "idFuncionario=" + idFuncionario + ", nomeFuncionario=" + nomeFuncionario + ", salarioBase=" + salarioBase + ", dataNascimento=" + dataNascimento + ", email=" + email + ", departamento=" + departamento + '}';
     }
-    
+
 }
